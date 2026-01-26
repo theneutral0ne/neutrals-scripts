@@ -28,7 +28,7 @@ local TargetCubeEdgeColor3 = Color3.fromRGB(255, 220, 0)
 local TargetCubeLineThicknessNumber = 2
 local TargetCubeLines = {}
 
-for LineIndex = 1, 12 do
+for LineIndex = 1, 4 do
 	local Line = Drawing.new("Line")
 	Line.Thickness = TargetCubeLineThicknessNumber
 	Line.Transparency = 1
@@ -567,8 +567,55 @@ local function SetTargetCubeVisible(IsVisible)
 	end
 end
 
-local function UpdateTargetCube(CubeCFrame, CubeSize)
-	local WorldCorners = GetCubeCorners(CubeCFrame, CubeSize)
+local function GetPlateCorners(CubeCFrame, CubeSize, SurfacePointVector3)
+	local Center = CubeCFrame.Position
+	local NormalVector3 = SurfacePointVector3 and (SurfacePointVector3 - Center) or Vector3.zero
+	if NormalVector3.Magnitude == 0 then
+		NormalVector3 = CubeCFrame.LookVector
+	else
+		NormalVector3 = NormalVector3.Unit
+	end
+
+	local Axes = {
+		{ axis = CubeCFrame.RightVector, size = CubeSize.X },
+		{ axis = CubeCFrame.UpVector, size = CubeSize.Y },
+		{ axis = CubeCFrame.LookVector, size = CubeSize.Z },
+	}
+
+	local ThicknessIndex = 1
+	local BestDot = math.abs(NormalVector3:Dot(Axes[1].axis))
+	for Index = 2, 3 do
+		local AxisDot = math.abs(NormalVector3:Dot(Axes[Index].axis))
+		if AxisDot > BestDot then
+			BestDot = AxisDot
+			ThicknessIndex = Index
+		end
+	end
+
+	local ThicknessAxis = Axes[ThicknessIndex]
+	local PlateAxes = {}
+	for Index = 1, 3 do
+		if Index ~= ThicknessIndex then
+			table.insert(PlateAxes, Axes[Index])
+		end
+	end
+
+	local ThicknessDot = NormalVector3:Dot(ThicknessAxis.axis)
+	local ThicknessSign = ThicknessDot >= 0 and 1 or -1
+	local PlateCenter = Center + ThicknessAxis.axis * (ThicknessAxis.size * 0.5 * ThicknessSign)
+	local HalfAxisA = PlateAxes[1].axis * (PlateAxes[1].size * 0.5)
+	local HalfAxisB = PlateAxes[2].axis * (PlateAxes[2].size * 0.5)
+
+	return {
+		PlateCenter - HalfAxisA - HalfAxisB,
+		PlateCenter + HalfAxisA - HalfAxisB,
+		PlateCenter + HalfAxisA + HalfAxisB,
+		PlateCenter - HalfAxisA + HalfAxisB,
+	}
+end
+
+local function UpdateTargetCube(CubeCFrame, CubeSize, SurfacePointVector3)
+	local WorldCorners = GetPlateCorners(CubeCFrame, CubeSize, SurfacePointVector3)
 	local ScreenCorners = {}
 	local OnScreenFlags = {}
 	for Index, Corner in ipairs(WorldCorners) do
@@ -579,8 +626,6 @@ local function UpdateTargetCube(CubeCFrame, CubeSize)
 
 	local EdgePairs = {
 		{ 1, 2 }, { 2, 3 }, { 3, 4 }, { 4, 1 },
-		{ 5, 6 }, { 6, 7 }, { 7, 8 }, { 8, 5 },
-		{ 1, 5 }, { 2, 6 }, { 3, 7 }, { 4, 8 },
 	}
 
 	for LineIndex, Pair in ipairs(EdgePairs) do
@@ -1106,7 +1151,7 @@ RunService.RenderStepped.Connect(RunService.RenderStepped, function()
 		TargetLine.Visible = true
 		local CubeCFrame = IndicatorCubeCFrame or IndicatorPartInstance.CFrame
 		local CubeSize = IndicatorCubeSize or GetCubeSize(IndicatorPartInstance)
-		UpdateTargetCube(CubeCFrame, CubeSize)
+		UpdateTargetCube(CubeCFrame, CubeSize, IndicatorPointVector3)
 	else
 		TargetLine.Visible = false
 		SetTargetCubeVisible(false)
