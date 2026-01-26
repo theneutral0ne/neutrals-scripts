@@ -533,7 +533,11 @@ end
 local function GetCubeSize(TargetPart)
 	if VisibleCheckEnabledBoolean then
 		local SegmentCount = math.max(VisibleCheckSubdivisionsNumber, 1)
-		return TargetPart.Size / SegmentCount
+		return Vector3.new(
+			TargetPart.Size.X / SegmentCount,
+			TargetPart.Size.Y / SegmentCount,
+			TargetPart.Size.Z / SegmentCount
+		)
 	end
 	return TargetPart.Size
 end
@@ -609,27 +613,80 @@ local function GetVisiblePointForPart(PartInstance, CharacterModel, MouseLocatio
 	local StepSize = Vector3.new(PartSize.X / SubdivisionNumber, PartSize.Y / SubdivisionNumber, PartSize.Z / SubdivisionNumber)
 	local HalfStep = StepSize * 0.5
 	local BestPointVector3 = nil
+	local BestCubeCFrame = nil
+	local BestCubeSize = nil
 	local BestDistanceNumber = math.huge
+	local Rotation = PartInstance.CFrame - PartInstance.CFrame.Position
+	local ThicknessNumber = math.min(StepSize.X, StepSize.Y, StepSize.Z)
+
+	local function EvaluateSurfacePoint(LocalPoint, LocalCenter, CellSize)
+		local TargetPointVector3 = PartInstance.CFrame:PointToWorldSpace(LocalPoint)
+		local ScreenPositionVector3, OnScreenBoolean = Camera.WorldToViewportPoint(Camera, TargetPointVector3)
+		if not OnScreenBoolean then
+			return
+		end
+		local ScreenPositionVector2 = Vector2.new(ScreenPositionVector3.X, ScreenPositionVector3.Y)
+		local ScreenDistanceNumber = (ScreenPositionVector2 - MouseLocationVector2).Magnitude
+		if ScreenDistanceNumber >= BestDistanceNumber then
+			return
+		end
+		if not IsVisible(TargetPointVector3, CharacterModel) then
+			return
+		end
+		BestDistanceNumber = ScreenDistanceNumber
+		BestPointVector3 = TargetPointVector3
+		BestCubeCFrame = CFrame.new(PartInstance.CFrame:PointToWorldSpace(LocalCenter)) * Rotation
+		BestCubeSize = CellSize
+	end
+
+	for YIndex = 0, SubdivisionNumber - 1 do
+		local YOffset = -HalfSize.Y + HalfStep.Y + StepSize.Y * YIndex
+		for ZIndex = 0, SubdivisionNumber - 1 do
+			local ZOffset = -HalfSize.Z + HalfStep.Z + StepSize.Z * ZIndex
+			EvaluateSurfacePoint(
+				Vector3.new(HalfSize.X, YOffset, ZOffset),
+				Vector3.new(HalfSize.X - ThicknessNumber / 2, YOffset, ZOffset),
+				Vector3.new(ThicknessNumber, StepSize.Y, StepSize.Z)
+			)
+			EvaluateSurfacePoint(
+				Vector3.new(-HalfSize.X, YOffset, ZOffset),
+				Vector3.new(-HalfSize.X + ThicknessNumber / 2, YOffset, ZOffset),
+				Vector3.new(ThicknessNumber, StepSize.Y, StepSize.Z)
+			)
+		end
+	end
+
+	for XIndex = 0, SubdivisionNumber - 1 do
+		local XOffset = -HalfSize.X + HalfStep.X + StepSize.X * XIndex
+		for ZIndex = 0, SubdivisionNumber - 1 do
+			local ZOffset = -HalfSize.Z + HalfStep.Z + StepSize.Z * ZIndex
+			EvaluateSurfacePoint(
+				Vector3.new(XOffset, HalfSize.Y, ZOffset),
+				Vector3.new(XOffset, HalfSize.Y - ThicknessNumber / 2, ZOffset),
+				Vector3.new(StepSize.X, ThicknessNumber, StepSize.Z)
+			)
+			EvaluateSurfacePoint(
+				Vector3.new(XOffset, -HalfSize.Y, ZOffset),
+				Vector3.new(XOffset, -HalfSize.Y + ThicknessNumber / 2, ZOffset),
+				Vector3.new(StepSize.X, ThicknessNumber, StepSize.Z)
+			)
+		end
+	end
 
 	for XIndex = 0, SubdivisionNumber - 1 do
 		local XOffset = -HalfSize.X + HalfStep.X + StepSize.X * XIndex
 		for YIndex = 0, SubdivisionNumber - 1 do
 			local YOffset = -HalfSize.Y + HalfStep.Y + StepSize.Y * YIndex
-			for ZIndex = 0, SubdivisionNumber - 1 do
-				local ZOffset = -HalfSize.Z + HalfStep.Z + StepSize.Z * ZIndex
-				local TargetPointVector3 = PartInstance.CFrame:PointToWorldSpace(Vector3.new(XOffset, YOffset, ZOffset))
-				if IsVisible(TargetPointVector3, CharacterModel) then
-					local ScreenPositionVector3, OnScreenBoolean = Camera.WorldToViewportPoint(Camera, TargetPointVector3)
-					if OnScreenBoolean then
-						local ScreenPositionVector2 = Vector2.new(ScreenPositionVector3.X, ScreenPositionVector3.Y)
-						local ScreenDistanceNumber = (ScreenPositionVector2 - MouseLocationVector2).Magnitude
-						if ScreenDistanceNumber < BestDistanceNumber then
-							BestDistanceNumber = ScreenDistanceNumber
-							BestPointVector3 = TargetPointVector3
-						end
-					end
-				end
-			end
+			EvaluateSurfacePoint(
+				Vector3.new(XOffset, YOffset, HalfSize.Z),
+				Vector3.new(XOffset, YOffset, HalfSize.Z - ThicknessNumber / 2),
+				Vector3.new(StepSize.X, StepSize.Y, ThicknessNumber)
+			)
+			EvaluateSurfacePoint(
+				Vector3.new(XOffset, YOffset, -HalfSize.Z),
+				Vector3.new(XOffset, YOffset, -HalfSize.Z + ThicknessNumber / 2),
+				Vector3.new(StepSize.X, StepSize.Y, ThicknessNumber)
+			)
 		end
 	end
 
@@ -637,13 +694,10 @@ local function GetVisiblePointForPart(PartInstance, CharacterModel, MouseLocatio
 		return nil
 	end
 
-	local Rotation = PartInstance.CFrame - PartInstance.CFrame.Position
-	local SegmentCFrame = CFrame.new(BestPointVector3) * Rotation
-
 	return {
 		point = BestPointVector3,
-		cubeCFrame = SegmentCFrame,
-		cubeSize = StepSize,
+		cubeCFrame = BestCubeCFrame,
+		cubeSize = BestCubeSize,
 	}
 end
 
