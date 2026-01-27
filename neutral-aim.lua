@@ -91,7 +91,7 @@ MenuGui.Parent = gethui()
 
 local MenuFrame = Instance.new("Frame")
 MenuFrame.Name = "MainFrame"
-MenuFrame.Size = UDim2.new(0, 230, 0, 296)
+MenuFrame.Size = UDim2.new(0, 230, 0, 368)
 MenuFrame.Position = UDim2.new(0, 20, 0, 200)
 MenuFrame.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
 MenuFrame.BorderSizePixel = 0
@@ -112,10 +112,43 @@ TitleLabel.TextXAlignment = Enum.TextXAlignment.Left
 TitleLabel.ZIndex = 101
 TitleLabel.Parent = MenuFrame
 
+local function CreateSectionHeader(SectionTitleString, YOffsetNumber)
+	local HeaderFrame = Instance.new("Frame")
+	HeaderFrame.Name = SectionTitleString .. "HeaderFrame"
+	HeaderFrame.Size = UDim2.new(1, -20, 0, 20)
+	HeaderFrame.Position = UDim2.new(0, 10, 0, YOffsetNumber)
+	HeaderFrame.BackgroundTransparency = 1
+	HeaderFrame.ZIndex = 101
+	HeaderFrame.Parent = MenuFrame
+
+	local HeaderLabel = Instance.new("TextLabel")
+	HeaderLabel.Name = SectionTitleString .. "HeaderLabel"
+	HeaderLabel.Size = UDim2.new(0, 120, 1, 0)
+	HeaderLabel.BackgroundTransparency = 1
+	HeaderLabel.Text = SectionTitleString
+	HeaderLabel.Font = Enum.Font.SourceSansSemibold
+	HeaderLabel.TextSize = 14
+	HeaderLabel.TextColor3 = Color3.fromRGB(0, 200, 200)
+	HeaderLabel.TextXAlignment = Enum.TextXAlignment.Left
+	HeaderLabel.ZIndex = 102
+	HeaderLabel.Parent = HeaderFrame
+
+	local Divider = Instance.new("Frame")
+	Divider.Name = SectionTitleString .. "Divider"
+	Divider.Size = UDim2.new(1, -125, 0, 1)
+	Divider.Position = UDim2.new(0, 125, 0.5, 0)
+	Divider.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
+	Divider.BorderSizePixel = 0
+	Divider.ZIndex = 101
+	Divider.Parent = HeaderFrame
+end
+
+CreateSectionHeader("Aim Settings", 30)
+
 local SmoothingValueLabel = Instance.new("TextLabel")
 SmoothingValueLabel.Name = "SmoothingValueLabel"
 SmoothingValueLabel.Size = UDim2.new(1, -10, 0, 20)
-SmoothingValueLabel.Position = UDim2.new(0, 5, 0, 26)
+SmoothingValueLabel.Position = UDim2.new(0, 5, 0, 52)
 SmoothingValueLabel.BackgroundTransparency = 1
 SmoothingValueLabel.TextXAlignment = Enum.TextXAlignment.Left
 SmoothingValueLabel.Font = Enum.Font.SourceSans
@@ -128,7 +161,7 @@ SmoothingValueLabel.Parent = MenuFrame
 local SmoothSliderBackFrame = Instance.new("Frame")
 SmoothSliderBackFrame.Name = "SmoothSliderBackFrame"
 SmoothSliderBackFrame.Size = UDim2.new(1, -20, 0, 8)
-SmoothSliderBackFrame.Position = UDim2.new(0, 10, 0, 50)
+SmoothSliderBackFrame.Position = UDim2.new(0, 10, 0, 76)
 SmoothSliderBackFrame.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
 SmoothSliderBackFrame.BorderSizePixel = 0
 SmoothSliderBackFrame.ZIndex = 101
@@ -154,7 +187,7 @@ SmoothSliderKnobFrame.Parent = SmoothSliderBackFrame
 local FovValueLabel = Instance.new("TextLabel")
 FovValueLabel.Name = "FovValueLabel"
 FovValueLabel.Size = UDim2.new(1, -10, 0, 20)
-FovValueLabel.Position = UDim2.new(0, 5, 0, 76)
+FovValueLabel.Position = UDim2.new(0, 5, 0, 102)
 FovValueLabel.BackgroundTransparency = 1
 FovValueLabel.TextXAlignment = Enum.TextXAlignment.Left
 FovValueLabel.Font = Enum.Font.SourceSans
@@ -167,7 +200,7 @@ FovValueLabel.Parent = MenuFrame
 local FovSliderBackFrame = Instance.new("Frame")
 FovSliderBackFrame.Name = "FovSliderBackFrame"
 FovSliderBackFrame.Size = UDim2.new(1, -20, 0, 8)
-FovSliderBackFrame.Position = UDim2.new(0, 10, 0, 100)
+FovSliderBackFrame.Position = UDim2.new(0, 10, 0, 126)
 FovSliderBackFrame.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
 FovSliderBackFrame.BorderSizePixel = 0
 FovSliderBackFrame.ZIndex = 101
@@ -193,7 +226,7 @@ FovSliderKnobFrame.Parent = FovSliderBackFrame
 local HeadshotToggleButton = Instance.new("TextButton")
 HeadshotToggleButton.Name = "HeadshotToggleButton"
 HeadshotToggleButton.Size = UDim2.new(1, -20, 0, 20)
-HeadshotToggleButton.Position = UDim2.new(0, 10, 0, 122)
+HeadshotToggleButton.Position = UDim2.new(0, 10, 0, 172)
 HeadshotToggleButton.BackgroundColor3 = Color3.fromRGB(100, 0, 0)
 HeadshotToggleButton.BorderSizePixel = 0
 HeadshotToggleButton.Text = "Headshot Priority: OFF"
@@ -206,7 +239,7 @@ HeadshotToggleButton.Parent = MenuFrame
 local AutoFireToggleButton = Instance.new("TextButton")
 AutoFireToggleButton.Name = "AutoFireToggleButton"
 AutoFireToggleButton.Size = UDim2.new(1, -20, 0, 20)
-AutoFireToggleButton.Position = UDim2.new(0, 10, 0, 146)
+AutoFireToggleButton.Position = UDim2.new(0, 10, 0, 196)
 AutoFireToggleButton.BackgroundColor3 = Color3.fromRGB(0, 60, 120)
 AutoFireToggleButton.BorderSizePixel = 0
 AutoFireToggleButton.Text = "Auto Fire: ON"
@@ -219,7 +252,7 @@ AutoFireToggleButton.Parent = MenuFrame
 local VisibleCheckToggleButton = Instance.new("TextButton")
 VisibleCheckToggleButton.Name = "VisibleCheckToggleButton"
 VisibleCheckToggleButton.Size = UDim2.new(1, -20, 0, 20)
-VisibleCheckToggleButton.Position = UDim2.new(0, 10, 0, 170)
+VisibleCheckToggleButton.Position = UDim2.new(0, 10, 0, 220)
 VisibleCheckToggleButton.BackgroundColor3 = Color3.fromRGB(0, 80, 80)
 VisibleCheckToggleButton.BorderSizePixel = 0
 VisibleCheckToggleButton.Text = "Visible Check: ON"
@@ -232,7 +265,7 @@ VisibleCheckToggleButton.Parent = MenuFrame
 local FovToggleButton = Instance.new("TextButton")
 FovToggleButton.Name = "FovToggleButton"
 FovToggleButton.Size = UDim2.new(1, -20, 0, 20)
-FovToggleButton.Position = UDim2.new(0, 10, 0, 194)
+FovToggleButton.Position = UDim2.new(0, 10, 0, 244)
 FovToggleButton.BackgroundColor3 = Color3.fromRGB(80, 80, 80)
 FovToggleButton.BorderSizePixel = 0
 FovToggleButton.Text = "FOV Circle: ON"
@@ -245,7 +278,7 @@ FovToggleButton.Parent = MenuFrame
 local TargetLineToggleButton = Instance.new("TextButton")
 TargetLineToggleButton.Name = "TargetLineToggleButton"
 TargetLineToggleButton.Size = UDim2.new(1, -20, 0, 20)
-TargetLineToggleButton.Position = UDim2.new(0, 10, 0, 218)
+TargetLineToggleButton.Position = UDim2.new(0, 10, 0, 268)
 TargetLineToggleButton.BackgroundColor3 = Color3.fromRGB(80, 80, 80)
 TargetLineToggleButton.BorderSizePixel = 0
 TargetLineToggleButton.Text = "Target Line: ON"
@@ -258,7 +291,7 @@ TargetLineToggleButton.Parent = MenuFrame
 local LockKeyToggleButton = Instance.new("TextButton")
 LockKeyToggleButton.Name = "LockKeyToggleButton"
 LockKeyToggleButton.Size = UDim2.new(1, -20, 0, 20)
-LockKeyToggleButton.Position = UDim2.new(0, 10, 0, 242)
+LockKeyToggleButton.Position = UDim2.new(0, 10, 0, 316)
 LockKeyToggleButton.BackgroundColor3 = Color3.fromRGB(80, 80, 0)
 LockKeyToggleButton.BorderSizePixel = 0
 LockKeyToggleButton.Text = "Lock Key: RMB"
@@ -271,7 +304,7 @@ LockKeyToggleButton.Parent = MenuFrame
 local HookMethodToggleButton = Instance.new("TextButton")
 HookMethodToggleButton.Name = "HookMethodToggleButton"
 HookMethodToggleButton.Size = UDim2.new(1, -20, 0, 20)
-HookMethodToggleButton.Position = UDim2.new(0, 10, 0, 266)
+HookMethodToggleButton.Position = UDim2.new(0, 10, 0, 340)
 HookMethodToggleButton.BackgroundColor3 = Color3.fromRGB(80, 40, 120)
 HookMethodToggleButton.BorderSizePixel = 0
 HookMethodToggleButton.Text = "Method: Hook"
@@ -280,6 +313,9 @@ HookMethodToggleButton.TextSize = 16
 HookMethodToggleButton.TextColor3 = Color3.fromRGB(255, 255, 255)
 HookMethodToggleButton.ZIndex = 101
 HookMethodToggleButton.Parent = MenuFrame
+
+CreateSectionHeader("Targeting", 150)
+CreateSectionHeader("Behavior", 296)
 
 local function UpdateHeadshotButtonAppearance()
 	if HeadshotPriorityBoolean then
