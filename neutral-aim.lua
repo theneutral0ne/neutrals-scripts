@@ -910,23 +910,25 @@ local function GetBestTargetForCharacter(CharacterModel, MouseLocationVector2)
 	local ClosestHeadTargetData = nil
 
 	for _, PartInstance in ipairs(CharacterModel:GetChildren()) do
-		if PartInstance:IsA("BasePart") then
-			local TargetData = GetTargetDataForPart(PartInstance, CharacterModel, MouseLocationVector2)
-			if not TargetData then
-				continue
-			end
-			local PartNameLowerString = string.lower(PartInstance.Name)
-			local IsHeadBoolean = string.find(PartNameLowerString, "head") ~= nil
-			if IsHeadBoolean then
-				if TargetData.screenDistance < ClosestHeadDistanceNumber then
-					ClosestHeadDistanceNumber = TargetData.screenDistance
-					ClosestHeadTargetData = TargetData
-				end
-			end
-			if TargetData.screenDistance < ClosestDistanceNumber then
-				ClosestDistanceNumber = TargetData.screenDistance
-				ClosestTargetData = TargetData
-			end
+		if not PartInstance:IsA("BasePart") then
+			continue
+		end
+
+		local TargetData = GetTargetDataForPart(PartInstance, CharacterModel, MouseLocationVector2)
+		if not TargetData then
+			continue
+		end
+
+		local PartNameLowerString = string.lower(PartInstance.Name)
+		local IsHeadBoolean = string.find(PartNameLowerString, "head") ~= nil
+		if IsHeadBoolean and TargetData.screenDistance < ClosestHeadDistanceNumber then
+			ClosestHeadDistanceNumber = TargetData.screenDistance
+			ClosestHeadTargetData = TargetData
+		end
+
+		if TargetData.screenDistance < ClosestDistanceNumber then
+			ClosestDistanceNumber = TargetData.screenDistance
+			ClosestTargetData = TargetData
 		end
 	end
 
@@ -1120,58 +1122,69 @@ RunService.RenderStepped.Connect(RunService.RenderStepped, function()
 
 	if AllowTargetSearchBoolean then
 		for _, PlayerObject in ipairs(Players.GetPlayers(Players)) do
-			if PlayerObject ~= LocalPlayer then
-				local CharacterModel = PlayerObject.Character
-				if CharacterModel then
-					local SameTeamBoolean = false
-					if TeamCheckEnabledBoolean then
-						if UseCustomTeamCheckBoolean then
-							if LocalTeamModel and CharacterModel.Parent == LocalTeamModel then
-								SameTeamBoolean = true
-							end
-						else
-							if LocalTeamObject and PlayerObject.Team == LocalTeamObject then
-								SameTeamBoolean = true
-							end
-						end
+			if PlayerObject == LocalPlayer then
+				continue
+			end
+
+			local CharacterModel = PlayerObject.Character
+			if not CharacterModel then
+				continue
+			end
+
+			local SameTeamBoolean = false
+			if TeamCheckEnabledBoolean then
+				if UseCustomTeamCheckBoolean then
+					if LocalTeamModel and CharacterModel.Parent == LocalTeamModel then
+						SameTeamBoolean = true
 					end
-					if not SameTeamBoolean then
-						local Humanoid = CharacterModel.FindFirstChildOfClass(CharacterModel, "Humanoid")
-						if Humanoid and Humanoid.Health > 0 then
-							for _, PartInstance in ipairs(CharacterModel:GetChildren()) do
-								if PartInstance:IsA("BasePart") then
-									local TargetData = GetTargetDataForPart(PartInstance, CharacterModel, MouseLocationVector2)
-									if not TargetData then
-										continue
-									end
-									local PartNameLowerString = string.lower(PartInstance.Name)
-									local IsHeadBoolean = string.find(PartNameLowerString, "head") ~= nil
-									if IsHeadBoolean then
-										if TargetData.screenDistance < ClosestHeadDistanceNumber then
-											ClosestHeadDistanceNumber = TargetData.screenDistance
-											ClosestHeadScreenPositionVector2 = TargetData.screen
-											ClosestHeadPartInstance = TargetData.part
-											ClosestHeadCharacterModel = TargetData.character
-											ClosestHeadPlayerObject = PlayerObject
-											ClosestHeadTargetPointVector3 = TargetData.point
-											ClosestHeadCubeCFrame = TargetData.cubeCFrame
-											ClosestHeadCubeSize = TargetData.cubeSize
-										end
-									end
-									if TargetData.screenDistance < ClosestDistanceNumber then
-										ClosestDistanceNumber = TargetData.screenDistance
-										ClosestScreenPositionVector2 = TargetData.screen
-										ClosestPartInstance = TargetData.part
-										ClosestCharacterModel = TargetData.character
-										ClosestPlayerObject = PlayerObject
-										ClosestTargetPointVector3 = TargetData.point
-										ClosestCubeCFrame = TargetData.cubeCFrame
-										ClosestCubeSize = TargetData.cubeSize
-									end
-								end
-							end
-						end
+				else
+					if LocalTeamObject and PlayerObject.Team == LocalTeamObject then
+						SameTeamBoolean = true
 					end
+				end
+			end
+
+			if SameTeamBoolean then
+				continue
+			end
+
+			local Humanoid = CharacterModel.FindFirstChildOfClass(CharacterModel, "Humanoid")
+			if not Humanoid or Humanoid.Health <= 0 then
+				continue
+			end
+
+			for _, PartInstance in ipairs(CharacterModel:GetChildren()) do
+				if not PartInstance:IsA("BasePart") then
+					continue
+				end
+
+				local TargetData = GetTargetDataForPart(PartInstance, CharacterModel, MouseLocationVector2)
+				if not TargetData then
+					continue
+				end
+
+				local PartNameLowerString = string.lower(PartInstance.Name)
+				local IsHeadBoolean = string.find(PartNameLowerString, "head") ~= nil
+				if IsHeadBoolean and TargetData.screenDistance < ClosestHeadDistanceNumber then
+					ClosestHeadDistanceNumber = TargetData.screenDistance
+					ClosestHeadScreenPositionVector2 = TargetData.screen
+					ClosestHeadPartInstance = TargetData.part
+					ClosestHeadCharacterModel = TargetData.character
+					ClosestHeadPlayerObject = PlayerObject
+					ClosestHeadTargetPointVector3 = TargetData.point
+					ClosestHeadCubeCFrame = TargetData.cubeCFrame
+					ClosestHeadCubeSize = TargetData.cubeSize
+				end
+
+				if TargetData.screenDistance < ClosestDistanceNumber then
+					ClosestDistanceNumber = TargetData.screenDistance
+					ClosestScreenPositionVector2 = TargetData.screen
+					ClosestPartInstance = TargetData.part
+					ClosestCharacterModel = TargetData.character
+					ClosestPlayerObject = PlayerObject
+					ClosestTargetPointVector3 = TargetData.point
+					ClosestCubeCFrame = TargetData.cubeCFrame
+					ClosestCubeSize = TargetData.cubeSize
 				end
 			end
 		end
