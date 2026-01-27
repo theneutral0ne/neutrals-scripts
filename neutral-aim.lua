@@ -252,7 +252,7 @@ AutoFireToggleButton.Parent = MenuFrame
 local VisibleCheckToggleButton = Instance.new("TextButton")
 VisibleCheckToggleButton.Name = "VisibleCheckToggleButton"
 VisibleCheckToggleButton.Size = UDim2.new(1, -20, 0, 20)
-VisibleCheckToggleButton.Position = UDim2.new(0, 10, 0, 252)
+VisibleCheckToggleButton.Position = UDim2.new(0, 10, 0, 220)
 VisibleCheckToggleButton.BackgroundColor3 = Color3.fromRGB(0, 80, 80)
 VisibleCheckToggleButton.BorderSizePixel = 0
 VisibleCheckToggleButton.Text = "Visible Check: ON"
@@ -315,7 +315,7 @@ HookMethodToggleButton.ZIndex = 101
 HookMethodToggleButton.Parent = MenuFrame
 
 CreateSectionHeader("Targeting", 150)
-CreateSectionHeader("Visibility", 230)
+CreateSectionHeader("Visibility", 250)
 CreateSectionHeader("Behavior", 330)
 
 local function UpdateHeadshotButtonAppearance()
