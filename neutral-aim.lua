@@ -898,7 +898,7 @@ local function GetTargetDataForPart(PartInstance, CharacterModel, MouseLocationV
 		cubeCFrame = CubeCFrame,
 		cubeSize = CubeSize,
 		screen = ScreenPositionVector2,
-		distance = ScreenDistanceNumber,
+		screenDistance = ScreenDistanceNumber,
 	}
 end
 
@@ -918,13 +918,13 @@ local function GetBestTargetForCharacter(CharacterModel, MouseLocationVector2)
 			local PartNameLowerString = string.lower(PartInstance.Name)
 			local IsHeadBoolean = string.find(PartNameLowerString, "head") ~= nil
 			if IsHeadBoolean then
-				if TargetData.distance < ClosestHeadDistanceNumber then
-					ClosestHeadDistanceNumber = TargetData.distance
+				if TargetData.screenDistance < ClosestHeadDistanceNumber then
+					ClosestHeadDistanceNumber = TargetData.screenDistance
 					ClosestHeadTargetData = TargetData
 				end
 			end
-			if TargetData.distance < ClosestDistanceNumber then
-				ClosestDistanceNumber = TargetData.distance
+			if TargetData.screenDistance < ClosestDistanceNumber then
+				ClosestDistanceNumber = TargetData.screenDistance
 				ClosestTargetData = TargetData
 			end
 		end
@@ -1068,9 +1068,9 @@ RunService.RenderStepped.Connect(RunService.RenderStepped, function()
 			local TargetData = GetTargetDataForPart(CurrentTargetPartInstance, CurrentTargetCharacterModel, MouseLocationVector2, false)
 			if TargetData then
 				CurrentTargetValidBoolean = true
-				CurrentTargetDistanceNumber = TargetData.distance
+				CurrentTargetDistanceNumber = TargetData.screenDistance
 				local BestTargetData = GetBestTargetForCharacter(CurrentTargetCharacterModel, MouseLocationVector2)
-				if BestTargetData and BestTargetData.distance < (CurrentTargetDistanceNumber - RetargetMinImprovementNumber) then
+				if BestTargetData and BestTargetData.screenDistance < (CurrentTargetDistanceNumber - RetargetMinImprovementNumber) then
 					FinalTargetPartInstance = BestTargetData.part
 					FinalTargetCharacterModel = BestTargetData.character
 					FinalTargetPlayerObject = CurrentTargetPlayerObject
@@ -1147,8 +1147,8 @@ RunService.RenderStepped.Connect(RunService.RenderStepped, function()
 									local PartNameLowerString = string.lower(PartInstance.Name)
 									local IsHeadBoolean = string.find(PartNameLowerString, "head") ~= nil
 									if IsHeadBoolean then
-										if TargetData.distance < ClosestHeadDistanceNumber then
-											ClosestHeadDistanceNumber = TargetData.distance
+										if TargetData.screenDistance < ClosestHeadDistanceNumber then
+											ClosestHeadDistanceNumber = TargetData.screenDistance
 											ClosestHeadScreenPositionVector2 = TargetData.screen
 											ClosestHeadPartInstance = TargetData.part
 											ClosestHeadCharacterModel = TargetData.character
@@ -1158,8 +1158,8 @@ RunService.RenderStepped.Connect(RunService.RenderStepped, function()
 											ClosestHeadCubeSize = TargetData.cubeSize
 										end
 									end
-									if TargetData.distance < ClosestDistanceNumber then
-										ClosestDistanceNumber = TargetData.distance
+									if TargetData.screenDistance < ClosestDistanceNumber then
+										ClosestDistanceNumber = TargetData.screenDistance
 										ClosestScreenPositionVector2 = TargetData.screen
 										ClosestPartInstance = TargetData.part
 										ClosestCharacterModel = TargetData.character
