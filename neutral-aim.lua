@@ -747,7 +747,7 @@ local function IsVisible(TargetPositionVector3, CharacterModel, PartInstance)
 	local Result = WorkspaceService.Raycast(WorkspaceService, Camera.CFrame.Position, DirectionVector3, VisibilityRaycastParams)
 	if Result then
 		if PartInstance then
-			return Result.Instance == PartInstance
+			return Result.Instance == PartInstance or Result.Instance:IsDescendantOf(CharacterModel)
 		end
 		return Result.Instance.IsDescendantOf(Result.Instance, CharacterModel)
 	end
