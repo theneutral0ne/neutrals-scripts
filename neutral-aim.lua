@@ -64,6 +64,9 @@ local LastAutoFireTimeNumber = 0
 local VisibleCheckEnabledBoolean = true
 local VisibleCheckSubdivisionsNumber = 4
 
+local ShowFovCircleBoolean = true
+local ShowTargetLineBoolean = true
+
 local UseHookMethodBoolean = true
 local UseCameraMethodBoolean = true
 
@@ -88,7 +91,7 @@ MenuGui.Parent = gethui()
 
 local MenuFrame = Instance.new("Frame")
 MenuFrame.Name = "MainFrame"
-MenuFrame.Size = UDim2.new(0, 230, 0, 248)
+MenuFrame.Size = UDim2.new(0, 230, 0, 296)
 MenuFrame.Position = UDim2.new(0, 20, 0, 200)
 MenuFrame.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
 MenuFrame.BorderSizePixel = 0
@@ -226,10 +229,36 @@ VisibleCheckToggleButton.TextColor3 = Color3.fromRGB(255, 255, 255)
 VisibleCheckToggleButton.ZIndex = 101
 VisibleCheckToggleButton.Parent = MenuFrame
 
+local FovToggleButton = Instance.new("TextButton")
+FovToggleButton.Name = "FovToggleButton"
+FovToggleButton.Size = UDim2.new(1, -20, 0, 20)
+FovToggleButton.Position = UDim2.new(0, 10, 0, 194)
+FovToggleButton.BackgroundColor3 = Color3.fromRGB(80, 80, 80)
+FovToggleButton.BorderSizePixel = 0
+FovToggleButton.Text = "FOV Circle: ON"
+FovToggleButton.Font = Enum.Font.SourceSans
+FovToggleButton.TextSize = 16
+FovToggleButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+FovToggleButton.ZIndex = 101
+FovToggleButton.Parent = MenuFrame
+
+local TargetLineToggleButton = Instance.new("TextButton")
+TargetLineToggleButton.Name = "TargetLineToggleButton"
+TargetLineToggleButton.Size = UDim2.new(1, -20, 0, 20)
+TargetLineToggleButton.Position = UDim2.new(0, 10, 0, 218)
+TargetLineToggleButton.BackgroundColor3 = Color3.fromRGB(80, 80, 80)
+TargetLineToggleButton.BorderSizePixel = 0
+TargetLineToggleButton.Text = "Target Line: ON"
+TargetLineToggleButton.Font = Enum.Font.SourceSans
+TargetLineToggleButton.TextSize = 16
+TargetLineToggleButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+TargetLineToggleButton.ZIndex = 101
+TargetLineToggleButton.Parent = MenuFrame
+
 local LockKeyToggleButton = Instance.new("TextButton")
 LockKeyToggleButton.Name = "LockKeyToggleButton"
 LockKeyToggleButton.Size = UDim2.new(1, -20, 0, 20)
-LockKeyToggleButton.Position = UDim2.new(0, 10, 0, 194)
+LockKeyToggleButton.Position = UDim2.new(0, 10, 0, 242)
 LockKeyToggleButton.BackgroundColor3 = Color3.fromRGB(80, 80, 0)
 LockKeyToggleButton.BorderSizePixel = 0
 LockKeyToggleButton.Text = "Lock Key: RMB"
@@ -242,7 +271,7 @@ LockKeyToggleButton.Parent = MenuFrame
 local HookMethodToggleButton = Instance.new("TextButton")
 HookMethodToggleButton.Name = "HookMethodToggleButton"
 HookMethodToggleButton.Size = UDim2.new(1, -20, 0, 20)
-HookMethodToggleButton.Position = UDim2.new(0, 10, 0, 218)
+HookMethodToggleButton.Position = UDim2.new(0, 10, 0, 266)
 HookMethodToggleButton.BackgroundColor3 = Color3.fromRGB(80, 40, 120)
 HookMethodToggleButton.BorderSizePixel = 0
 HookMethodToggleButton.Text = "Method: Hook"
@@ -279,6 +308,26 @@ local function UpdateVisibleCheckButtonAppearance()
 	else
 		VisibleCheckToggleButton.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
 		VisibleCheckToggleButton.Text = "Visible Check: OFF"
+	end
+end
+
+local function UpdateFovToggleButtonAppearance()
+	if ShowFovCircleBoolean then
+		FovToggleButton.BackgroundColor3 = Color3.fromRGB(0, 120, 120)
+		FovToggleButton.Text = "FOV Circle: ON"
+	else
+		FovToggleButton.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+		FovToggleButton.Text = "FOV Circle: OFF"
+	end
+end
+
+local function UpdateTargetLineToggleButtonAppearance()
+	if ShowTargetLineBoolean then
+		TargetLineToggleButton.BackgroundColor3 = Color3.fromRGB(0, 120, 120)
+		TargetLineToggleButton.Text = "Target Line: ON"
+	else
+		TargetLineToggleButton.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+		TargetLineToggleButton.Text = "Target Line: OFF"
 	end
 end
 
@@ -320,6 +369,18 @@ VisibleCheckToggleButton.MouseButton1Click.Connect(VisibleCheckToggleButton.Mous
 	UpdateVisibleCheckButtonAppearance()
 end)
 
+FovToggleButton.MouseButton1Click.Connect(FovToggleButton.MouseButton1Click, function()
+	ShowFovCircleBoolean = not ShowFovCircleBoolean
+	UpdateFovToggleButtonAppearance()
+end)
+
+TargetLineToggleButton.MouseButton1Click.Connect(TargetLineToggleButton.MouseButton1Click, function()
+	ShowTargetLineBoolean = not ShowTargetLineBoolean
+	UpdateTargetLineToggleButtonAppearance()
+	TargetLine.Visible = false
+	SetTargetCubeVisible(false)
+end)
+
 LockKeyToggleButton.MouseButton1Click.Connect(LockKeyToggleButton.MouseButton1Click, function()
 	UseEKeyForLockOnBoolean = not UseEKeyForLockOnBoolean
 	UpdateLockKeyButtonAppearance()
@@ -342,6 +403,8 @@ end)
 UpdateHeadshotButtonAppearance()
 UpdateAutoFireButtonAppearance()
 UpdateVisibleCheckButtonAppearance()
+UpdateFovToggleButtonAppearance()
+UpdateTargetLineToggleButtonAppearance()
 UpdateLockKeyButtonAppearance()
 UpdateHookMethodButtonAppearance()
 
@@ -892,6 +955,7 @@ RunService.RenderStepped.Connect(RunService.RenderStepped, function()
 	local MouseLocationVector2 = UserInputService.GetMouseLocation(UserInputService)
 	local MouseOverPartInstance = MouseObject.Target
 	FovCircle.Position = MouseLocationVector2
+	FovCircle.Visible = ShowFovCircleBoolean
 	if CurrentTargetPartInstance and (not CurrentTargetPartInstance.Parent or not CurrentTargetCharacterModel or not CurrentTargetCharacterModel.Parent) then
 		CurrentTargetPartInstance = nil
 		CurrentTargetCharacterModel = nil
@@ -1148,7 +1212,7 @@ RunService.RenderStepped.Connect(RunService.RenderStepped, function()
 		IndicatorCharacterModel = CandidateCharacterModel
 	end
 
-	if IndicatorScreenPositionVector2 and IndicatorPointVector3 and IndicatorPartInstance then
+	if IndicatorScreenPositionVector2 and IndicatorPointVector3 and IndicatorPartInstance and ShowTargetLineBoolean then
 		TargetLine.From = MouseLocationVector2
 		TargetLine.To = IndicatorScreenPositionVector2
 		TargetLine.Visible = true
