@@ -252,7 +252,7 @@ AutoFireToggleButton.Parent = MenuFrame
 local VisibleCheckToggleButton = Instance.new("TextButton")
 VisibleCheckToggleButton.Name = "VisibleCheckToggleButton"
 VisibleCheckToggleButton.Size = UDim2.new(1, -20, 0, 20)
-VisibleCheckToggleButton.Position = UDim2.new(0, 10, 0, 220)
+VisibleCheckToggleButton.Position = UDim2.new(0, 10, 0, 252)
 VisibleCheckToggleButton.BackgroundColor3 = Color3.fromRGB(0, 80, 80)
 VisibleCheckToggleButton.BorderSizePixel = 0
 VisibleCheckToggleButton.Text = "Visible Check: ON"
@@ -265,7 +265,7 @@ VisibleCheckToggleButton.Parent = MenuFrame
 local FovToggleButton = Instance.new("TextButton")
 FovToggleButton.Name = "FovToggleButton"
 FovToggleButton.Size = UDim2.new(1, -20, 0, 20)
-FovToggleButton.Position = UDim2.new(0, 10, 0, 262)
+FovToggleButton.Position = UDim2.new(0, 10, 0, 276)
 FovToggleButton.BackgroundColor3 = Color3.fromRGB(80, 80, 80)
 FovToggleButton.BorderSizePixel = 0
 FovToggleButton.Text = "FOV Circle: ON"
@@ -278,7 +278,7 @@ FovToggleButton.Parent = MenuFrame
 local TargetLineToggleButton = Instance.new("TextButton")
 TargetLineToggleButton.Name = "TargetLineToggleButton"
 TargetLineToggleButton.Size = UDim2.new(1, -20, 0, 20)
-TargetLineToggleButton.Position = UDim2.new(0, 10, 0, 286)
+TargetLineToggleButton.Position = UDim2.new(0, 10, 0, 300)
 TargetLineToggleButton.BackgroundColor3 = Color3.fromRGB(80, 80, 80)
 TargetLineToggleButton.BorderSizePixel = 0
 TargetLineToggleButton.Text = "Target Line: ON"
@@ -291,7 +291,7 @@ TargetLineToggleButton.Parent = MenuFrame
 local LockKeyToggleButton = Instance.new("TextButton")
 LockKeyToggleButton.Name = "LockKeyToggleButton"
 LockKeyToggleButton.Size = UDim2.new(1, -20, 0, 20)
-LockKeyToggleButton.Position = UDim2.new(0, 10, 0, 342)
+LockKeyToggleButton.Position = UDim2.new(0, 10, 0, 352)
 LockKeyToggleButton.BackgroundColor3 = Color3.fromRGB(80, 80, 0)
 LockKeyToggleButton.BorderSizePixel = 0
 LockKeyToggleButton.Text = "Lock Key: RMB"
@@ -304,7 +304,7 @@ LockKeyToggleButton.Parent = MenuFrame
 local HookMethodToggleButton = Instance.new("TextButton")
 HookMethodToggleButton.Name = "HookMethodToggleButton"
 HookMethodToggleButton.Size = UDim2.new(1, -20, 0, 20)
-HookMethodToggleButton.Position = UDim2.new(0, 10, 0, 366)
+HookMethodToggleButton.Position = UDim2.new(0, 10, 0, 376)
 HookMethodToggleButton.BackgroundColor3 = Color3.fromRGB(80, 40, 120)
 HookMethodToggleButton.BorderSizePixel = 0
 HookMethodToggleButton.Text = "Method: Hook"
@@ -315,8 +315,8 @@ HookMethodToggleButton.ZIndex = 101
 HookMethodToggleButton.Parent = MenuFrame
 
 CreateSectionHeader("Targeting", 150)
-CreateSectionHeader("Visibility", 240)
-CreateSectionHeader("Behavior", 320)
+CreateSectionHeader("Visibility", 230)
+CreateSectionHeader("Behavior", 330)
 
 local function UpdateHeadshotButtonAppearance()
 	if HeadshotPriorityBoolean then
