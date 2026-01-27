@@ -642,10 +642,13 @@ local function UpdateTargetCube(CubeCFrame, CubeSize, SurfacePointVector3)
 	end
 end
 
-local function IsVisible(TargetPositionVector3, CharacterModel)
+local function IsVisible(TargetPositionVector3, CharacterModel, PartInstance)
 	local DirectionVector3 = TargetPositionVector3 - Camera.CFrame.Position
 	local Result = WorkspaceService.Raycast(WorkspaceService, Camera.CFrame.Position, DirectionVector3, VisibilityRaycastParams)
 	if Result then
+		if PartInstance then
+			return Result.Instance == PartInstance
+		end
 		return Result.Instance.IsDescendantOf(Result.Instance, CharacterModel)
 	end
 	return true
@@ -675,7 +678,7 @@ local function GetVisiblePointForPart(PartInstance, CharacterModel, MouseLocatio
 		if ScreenDistanceNumber >= BestDistanceNumber then
 			return
 		end
-		if not IsVisible(TargetPointVector3, CharacterModel) then
+		if not IsVisible(TargetPointVector3, CharacterModel, PartInstance) then
 			return
 		end
 		BestDistanceNumber = ScreenDistanceNumber
