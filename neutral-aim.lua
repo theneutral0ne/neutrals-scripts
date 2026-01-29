@@ -879,6 +879,20 @@ local function GetTargetDataForPart(PartInstance, CharacterModel, MouseLocationV
 		CubeSize = VisibleTargetData.cubeSize
 	end
 
+	local function ClampPointToPart(TargetPoint)
+		local HalfSize = PartInstance.Size * 0.5
+		local Inset = math.min(0.05, math.min(HalfSize.X, HalfSize.Y, HalfSize.Z) * 0.1)
+		local LocalPoint = PartInstance.CFrame:PointToObjectSpace(TargetPoint)
+		local ClampedLocal = Vector3.new(
+			math.clamp(LocalPoint.X, -HalfSize.X + Inset, HalfSize.X - Inset),
+			math.clamp(LocalPoint.Y, -HalfSize.Y + Inset, HalfSize.Y - Inset),
+			math.clamp(LocalPoint.Z, -HalfSize.Z + Inset, HalfSize.Z - Inset)
+		)
+		return PartInstance.CFrame:PointToWorldSpace(ClampedLocal)
+	end
+
+	TargetPointVector3 = ClampPointToPart(TargetPointVector3)
+
 	ScreenPositionVector3, OnScreenBoolean = Camera.WorldToViewportPoint(Camera, TargetPointVector3)
 	if not OnScreenBoolean then
 		return nil
